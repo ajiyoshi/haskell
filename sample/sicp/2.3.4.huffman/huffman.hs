@@ -19,9 +19,11 @@ data CodeTree = CodeTree CodeTree CodeTree | Leaf Symbol Weight | Empty deriving
 
 left :: CodeTree -> CodeTree
 left (CodeTree l _) = l
+left _ = Empty
 
 right :: CodeTree -> CodeTree
 right (CodeTree _ r) = r
+right _ = Empty
 
 -- |
 -- >>> symbol (Leaf "hoge" 1)
@@ -35,6 +37,7 @@ right (CodeTree _ r) = r
 symbol :: CodeTree -> [Symbol]
 symbol (Leaf s _) = [s]
 symbol (CodeTree l r) = symbol l ++ symbol r
+symbol Empty = []
 
 -- |
 -- >>> weight (Leaf "hoge" 1)
@@ -48,6 +51,7 @@ symbol (CodeTree l r) = symbol l ++ symbol r
 weight :: CodeTree -> Weight
 weight (Leaf _ w) = w
 weight (CodeTree l r) = weight l + weight r
+weight Empty = 0
 
 type Bits = [Int]
 
@@ -66,8 +70,8 @@ decode bits root = itr bits root where
 -- >>> chooseBranch 1 (CodeTree (Leaf "left" 1) (Leaf "right" 2))
 -- Leaf "right" 2
 chooseBranch :: Int -> CodeTree -> CodeTree
-chooseBranch 0 (CodeTree l _) = l
-chooseBranch 1 (CodeTree _ r) = r
+chooseBranch 0 = left
+chooseBranch 1 = right
 
 {-
 adjoinSet :: CodeTree -> [CodeTree] -> [CodeTree]
